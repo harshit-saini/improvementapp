@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { AppProvider } from './context/AppContext'
 import { SnackbarProvider } from './context/SnackbarContext'
 import BottomNav from './components/BottomNav'
+import BillSync from './components/BillSync'
 import Home from './pages/Home'
 import Tasks from './pages/Tasks'
 import Stats from './pages/Stats'
@@ -49,6 +50,7 @@ export default function App() {
   return (
     <AppProvider>
       <SnackbarProvider>
+        <BillSync />
         <Shell />
       </SnackbarProvider>
     </AppProvider>

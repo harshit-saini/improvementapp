@@ -38,6 +38,10 @@ export function defaultState() {
       { id: 'h6', name: 'Late-night scrolling', type: 'bad', amount: 6, emoji: '📱', category: 'Screen time', repeatable: false, archived: false, createdAt: now },
       { id: 'h7', name: 'Skip the gym', type: 'bad', amount: 5, emoji: '🛋️', category: 'Health', repeatable: false, archived: false, createdAt: now },
     ],
+    bills: [
+      { id: 'b1', name: 'Daily upkeep', amount: 2, emoji: '🏠', category: 'Living costs', frequency: 'daily', archived: false, createdAt: now },
+      { id: 'b2', name: 'Streaming subscription', amount: 8, emoji: '📺', category: 'Subscriptions', frequency: 'weekly', archived: false, createdAt: now },
+    ],
     logs: [],
   }
 }
