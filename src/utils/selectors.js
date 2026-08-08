@@ -55,13 +55,55 @@ export function habitFrequency(logs, habits) {
     .sort((a, b) => b.count - a.count)
 }
 
+// Fixed spends (the "shop") deduct on a schedule whether or not the user opts into anything.
+// This computes any charges owed since each bill's creation that aren't already logged,
+// so the caller can append them — safe to call repeatedly, it never double-charges a period.
+export function getDueBillCharges(bills, logs, from = new Date()) {
+  const today = todayKey(from)
+  const charges = []
+  for (const bill of bills) {
+    if (bill.archived) continue
+    const billLogs = logs.filter((l) => l.billId === bill.id)
+    const chargedDays = new Set(billLogs.map((l) => l.dateKey))
+    const chargedWeeks = new Set(billLogs.map((l) => weekKey(l.dateKey)))
+    const cursor = new Date(bill.createdAt)
+    const seenWeeks = new Set()
+    while (todayKey(cursor) <= today) {
+      const dk = todayKey(cursor)
+      if (bill.frequency === 'weekly') {
+        const wk = weekKey(dk)
+        if (!seenWeeks.has(wk)) {
+          seenWeeks.add(wk)
+          if (!chargedWeeks.has(wk)) {
+            charges.push({ billId: bill.id, dateKey: dk, amount: -bill.amount })
+            chargedWeeks.add(wk)
+          }
+        }
+      } else if (!chargedDays.has(dk)) {
+        charges.push({ billId: bill.id, dateKey: dk, amount: -bill.amount })
+        chargedDays.add(dk)
+      }
+      cursor.setDate(cursor.getDate() + 1)
+    }
+  }
+  return charges
+}
+
+export function billTotals(logs, bills) {
+  return bills.map((b) => {
+    const billLogs = logs.filter((l) => l.billId === b.id)
+    return { bill: b, count: billLogs.length, total: billLogs.reduce((s, l) => s + Math.abs(l.amount), 0) }
+  })
+}
+
 export function computeAchievements(state) {
   const { logs, habits } = state
   const balance = getBalance(logs)
   const goodHabits = habits.filter((h) => h.type === 'good')
   const bestStreak = Math.max(0, ...goodHabits.map((h) => computeStreak(logs, h.id)))
-  const goodLogs = logs.filter((l) => l.amount > 0)
-  const badLogs = logs.filter((l) => l.amount < 0)
+  // Only habit-driven entries count toward these — automatic fixed spends aren't a "choice".
+  const goodLogs = logs.filter((l) => l.amount > 0 && l.habitId)
+  const badLogs = logs.filter((l) => l.amount < 0 && l.habitId)
   const last7 = Array.from({ length: 7 }, (_, i) => daysAgoKey(i))
   const noBadLast7 = badLogs.every((l) => !last7.includes(l.dateKey))
 

@@ -10,6 +10,9 @@ Everything is stored on-device — no backend, no account, works offline.
   a search bar, and your good habits / guilty pleasures as tap-to-log cards.
 - **Habits** — add, edit, or delete habits: name, reward/cost, emoji, category,
   and whether it can be logged once or multiple times a day.
+- **Fixed spends** — the "shop": recurring costs (daily or weekly) that charge
+  automatically on schedule whether or not you've earned anything, so there's
+  always a reason to keep the good habits going. Managed from the Habits page.
 - **Stats** — weekly earned-vs-spent chart, current streaks, most-logged
   habits, and unlockable achievements.
 - **Settings** — pick your currency (16 options), light/dark/system theme,
