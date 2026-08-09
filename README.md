@@ -13,8 +13,9 @@ Everything is stored on-device — no backend, no account, works offline.
 - **Fixed spends** — the "shop": recurring costs (daily or weekly) that charge
   automatically on schedule whether or not you've earned anything, so there's
   always a reason to keep the good habits going. Managed from the Habits page.
-- **Stats** — weekly earned-vs-spent chart, current streaks, most-logged
-  habits, and unlockable achievements.
+- **Stats** — weekly earned-vs-spent chart, a GitHub-style calendar heatmap of
+  daily consistency (tap any day for its net and activity count), current
+  streaks, most-logged habits, and unlockable achievements.
 - **Settings** — pick your currency (16 options), light/dark/system theme,
   a Material You accent color (generates a full tonal palette from a seed
   color), independent daily/weekly/monthly net-earnings goals with progress

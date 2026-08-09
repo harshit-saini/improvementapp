@@ -60,6 +60,25 @@ export function weeklyStats(logs, weeksCount = 6, from = new Date()) {
   return Array.from(buckets.values()).map((b) => ({ ...b, net: b.earned - b.spent }))
 }
 
+// Chronological (oldest → newest, inclusive of today) per-day net and activity count,
+// for the Stats calendar heatmap.
+export function getDailyActivity(logs, days = 140, from = new Date()) {
+  const byDay = new Map()
+  for (const l of logs) {
+    const entry = byDay.get(l.dateKey) || { net: 0, count: 0 }
+    entry.net += l.amount
+    entry.count += 1
+    byDay.set(l.dateKey, entry)
+  }
+  const result = []
+  for (let i = days - 1; i >= 0; i--) {
+    const dateKey = daysAgoKey(i, from)
+    const entry = byDay.get(dateKey) || { net: 0, count: 0 }
+    result.push({ dateKey, ...entry })
+  }
+  return result
+}
+
 export function habitFrequency(logs, habits) {
   const counts = new Map()
   for (const l of logs) counts.set(l.habitId, (counts.get(l.habitId) || 0) + 1)
