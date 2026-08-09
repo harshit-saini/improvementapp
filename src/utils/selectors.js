@@ -47,6 +47,21 @@ export function computeStreak(logs, habitId, from = new Date()) {
   return streak
 }
 
+// The reward/cost to use for a habit right now, given its streak. Once the streak that
+// would result from logging today reaches `streakBoostDays`, `streakBoostAmount` applies
+// instead of the base `amount` — so staying consistent is worth progressively more, and
+// breaking the streak drops you back to the base rate.
+export function getEffectiveHabitAmount(habit, logs, from = new Date()) {
+  if (!habit.streakBoostDays || habit.streakBoostAmount == null) {
+    return { amount: habit.amount, boosted: false }
+  }
+  const doneToday = isDoneToday(logs, habit.id, todayKey(from))
+  const streak = computeStreak(logs, habit.id, from)
+  const projectedStreak = doneToday ? streak : streak + 1
+  const boosted = projectedStreak >= habit.streakBoostDays
+  return { amount: boosted ? habit.streakBoostAmount : habit.amount, boosted }
+}
+
 export function weeklyStats(logs, weeksCount = 6, from = new Date()) {
   const weeks = lastNWeeks(weeksCount, from)
   const buckets = new Map(weeks.map((w) => [w.weekKey, { ...w, earned: 0, spent: 0 }]))

@@ -106,7 +106,10 @@ function HabitsManager() {
               </span>
               <span className="col" style={{ minWidth: 0 }}>
                 <span className="m3-title-sm" style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{h.name}</span>
-                <span className="m3-body-sm">{h.category} · {h.repeatable ? 'multi/day' : 'once/day'}</span>
+                <span className="m3-body-sm">
+                  {h.category} · {h.repeatable ? 'multi/day' : 'once/day'}
+                  {h.streakBoostDays > 0 && ` · 🔥 ${h.streakBoostDays}d → ${formatMoney(h.streakBoostAmount, settings.currencyCode)}`}
+                </span>
               </span>
             </div>
             <span className={`badge`} style={{ background: h.type === 'good' ? 'var(--md-primary-container)' : 'var(--md-error-container)', color: h.type === 'good' ? 'var(--md-on-primary-container)' : 'var(--md-on-error-container)' }}>

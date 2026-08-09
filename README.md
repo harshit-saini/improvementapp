@@ -9,7 +9,9 @@ Everything is stored on-device — no backend, no account, works offline.
 - **Home** — today's date, today's net balance vs. all-time overall balance,
   a search bar, and your good habits / guilty pleasures as tap-to-log cards.
 - **Habits** — add, edit, or delete habits: name, reward/cost, emoji, category,
-  and whether it can be logged once or multiple times a day.
+  whether it can be logged once or multiple times a day, and an optional
+  **streak bonus** — keep a habit going for N days and its reward/cost jumps
+  to a higher amount you set, resetting to the base rate if the streak breaks.
 - **Fixed spends** — the "shop": recurring costs (daily or weekly) that charge
   automatically on schedule whether or not you've earned anything, so there's
   always a reason to keep the good habits going. Managed from the Habits page.

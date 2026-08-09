@@ -3,7 +3,7 @@ import { useAppState, useAppActions } from '../context/AppContext'
 import { useSnackbar } from '../context/SnackbarContext'
 import { formatMoney, formatSigned } from '../utils/currency'
 import { todayKey, formatFriendlyDate } from '../utils/date'
-import { getBalance, getLogsForDay, isDoneToday, countToday, computeStreak, getPeriodNet } from '../utils/selectors'
+import { getBalance, getLogsForDay, isDoneToday, countToday, computeStreak, getPeriodNet, getEffectiveHabitAmount } from '../utils/selectors'
 import HabitRow from '../components/HabitRow'
 import ConfirmDialog from '../components/ConfirmDialog'
 
@@ -43,18 +43,20 @@ export default function Home() {
   }).filter(Boolean)
 
   function doGood(habit) {
+    const { amount, boosted } = getEffectiveHabitAmount(habit, logs)
     if (habit.repeatable) {
-      addLog({ habitId: habit.id, amount: habit.amount })
-      notify(`+${formatMoney(habit.amount, currency)} for ${habit.name}`)
+      addLog({ habitId: habit.id, amount })
+      notify(boosted ? `🔥 Streak bonus! +${formatMoney(amount, currency)} for ${habit.name}` : `+${formatMoney(amount, currency)} for ${habit.name}`)
     } else {
       if (isDoneToday(logs, habit.id, today)) return
-      addLog({ habitId: habit.id, amount: habit.amount })
-      notify(`Nice! +${formatMoney(habit.amount, currency)} earned`)
+      addLog({ habitId: habit.id, amount })
+      notify(boosted ? `🔥 Streak bonus! +${formatMoney(amount, currency)} earned` : `Nice! +${formatMoney(amount, currency)} earned`)
     }
   }
 
   function doBad(habit) {
-    if (overallBalance - habit.amount < 0) {
+    const { amount } = getEffectiveHabitAmount(habit, logs)
+    if (overallBalance - amount < 0) {
       setPendingSpend(habit)
       return
     }
@@ -62,8 +64,9 @@ export default function Home() {
   }
 
   function spendNow(habit) {
-    addLog({ habitId: habit.id, amount: -habit.amount })
-    notify(`${formatMoney(habit.amount, currency)} spent on ${habit.name}`)
+    const { amount, boosted } = getEffectiveHabitAmount(habit, logs)
+    addLog({ habitId: habit.id, amount: -amount })
+    notify(boosted ? `🔥 Streak made this pricier: ${formatMoney(amount, currency)} spent on ${habit.name}` : `${formatMoney(amount, currency)} spent on ${habit.name}`)
     setPendingSpend(null)
   }
 
@@ -142,6 +145,7 @@ export default function Home() {
               done={isDoneToday(logs, h.id, today)}
               count={countToday(logs, h.id, today)}
               streak={computeStreak(logs, h.id)}
+              {...getEffectiveHabitAmount(h, logs)}
               onAct={() => doGood(h)}
               onUndo={() => undoHabit(h)}
             />
@@ -160,6 +164,8 @@ export default function Home() {
               currencyCode={currency}
               done={isDoneToday(logs, h.id, today)}
               count={countToday(logs, h.id, today)}
+              streak={computeStreak(logs, h.id)}
+              {...getEffectiveHabitAmount(h, logs)}
               onAct={() => doBad(h)}
               onUndo={() => undoHabit(h)}
             />
@@ -170,7 +176,7 @@ export default function Home() {
       <ConfirmDialog
         open={!!pendingSpend}
         title="Not enough coins"
-        message={pendingSpend ? `You only have ${formatMoney(overallBalance, currency)}. Spending ${formatMoney(pendingSpend.amount, currency)} on "${pendingSpend.name}" will put you into debt. Do it anyway?` : ''}
+        message={pendingSpend ? `You only have ${formatMoney(overallBalance, currency)}. Spending ${formatMoney(getEffectiveHabitAmount(pendingSpend, logs).amount, currency)} on "${pendingSpend.name}" will put you into debt. Do it anyway?` : ''}
         confirmLabel="Spend anyway"
         danger
         onConfirm={() => spendNow(pendingSpend)}
