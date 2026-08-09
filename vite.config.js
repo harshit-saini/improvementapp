@@ -28,6 +28,25 @@ export default defineConfig({
       },
       workbox: {
         globPatterns: ['**/*.{js,css,html,png,svg,ico,woff2}'],
+        // The bottom nav depends on the Material Symbols web font and body text on
+        // Roboto, both loaded from Google Fonts — cache them so icons/type still work
+        // offline after the first successful load, not just the app shell.
+        runtimeCaching: [
+          {
+            urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
+            handler: 'StaleWhileRevalidate',
+            options: { cacheName: 'google-fonts-stylesheets' },
+          },
+          {
+            urlPattern: /^https:\/\/fonts\.gstatic\.com\/.*/i,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'google-fonts-webfonts',
+              cacheableResponse: { statuses: [0, 200] },
+              expiration: { maxAgeSeconds: 60 * 60 * 24 * 365, maxEntries: 30 },
+            },
+          },
+        ],
       },
     }),
   ],

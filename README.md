@@ -8,10 +8,11 @@ Everything is stored on-device — no backend, no account, works offline.
 
 - **Home** — today's date, today's net balance vs. all-time overall balance,
   a search bar, and your good habits / guilty pleasures as tap-to-log cards.
-- **Habits** — add, edit, or delete habits: name, reward/cost, emoji, category,
-  whether it can be logged once or multiple times a day, and an optional
-  **streak bonus** — keep a habit going for N days and its reward/cost jumps
-  to a higher amount you set, resetting to the base rate if the streak breaks.
+- **Habits** — add, edit, or delete habits: name, reward/cost, a searchable
+  library of 120+ icons, category, whether it can be logged once or multiple
+  times a day, and an optional **streak bonus** — keep a habit going for N
+  days and its reward/cost jumps to a higher amount you set, resetting to the
+  base rate if the streak breaks.
 - **Fixed spends** — the "shop": recurring costs (daily or weekly) that charge
   automatically on schedule whether or not you've earned anything, so there's
   always a reason to keep the good habits going. Managed from the Habits page.
@@ -30,7 +31,9 @@ Everything is stored on-device — no backend, no account, works offline.
 
 Styled after Google's **Material You (M3)**: dynamic color generated from a
 seed hue via `@material/material-color-utilities`, M3 shape/elevation/typography
-scale, filled/tonal/outlined buttons, bottom navigation, and bottom-sheet dialogs.
+scale, filled/tonal/outlined buttons, bottom-sheet dialogs, and a bottom
+navigation bar built on Material Symbols — outlined icons when a tab is
+inactive, filled the moment it's selected.
 
 ## Development
 

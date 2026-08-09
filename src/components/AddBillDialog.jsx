@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react'
 import Dialog from './Dialog'
-
-const SHOP_EMOJIS = ['🏠', '📺', '📶', '🚌', '🧾', '💳', '🏦', '📱', '🚗', '🎟️', '🛒', '💡']
+import IconPicker from './IconPicker'
 
 const emptyForm = { name: '', amount: 5, emoji: '🏠', category: '', frequency: 'daily' }
 
@@ -78,19 +77,8 @@ export default function AddBillDialog({ open, initial, onClose, onSave, onDelete
       </div>
 
       <div className="m3-field">
-        <label>Icon</label>
-        <div className="chip-row" style={{ marginBottom: 0 }}>
-          {SHOP_EMOJIS.map((e) => (
-            <button
-              key={e}
-              className={`m3-chip${form.emoji === e ? ' selected' : ''}`}
-              onClick={() => set({ emoji: e })}
-              style={{ fontSize: '1.1rem', width: 44, justifyContent: 'center' }}
-            >
-              {e}
-            </button>
-          ))}
-        </div>
+        <label>Icon {form.emoji && <span style={{ fontSize: '1.1rem' }}>{form.emoji}</span>}</label>
+        <IconPicker value={form.emoji} onChange={(emoji) => set({ emoji })} />
       </div>
     </Dialog>
   )
