@@ -66,7 +66,7 @@ export default function Home() {
   function spendNow(habit) {
     const { amount, boosted } = getEffectiveHabitAmount(habit, logs)
     addLog({ habitId: habit.id, amount: -amount })
-    notify(boosted ? `🔥 Streak made this pricier: ${formatMoney(amount, currency)} spent on ${habit.name}` : `${formatMoney(amount, currency)} spent on ${habit.name}`)
+    notify(boosted ? `🔥 Streak penalty: ${formatMoney(amount, currency)} spent on ${habit.name}` : `${formatMoney(amount, currency)} spent on ${habit.name}`)
     setPendingSpend(null)
   }
 

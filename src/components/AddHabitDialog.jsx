@@ -18,6 +18,8 @@ export default function AddHabitDialog({ open, initial, onClose, onSave, onDelet
   if (!open) return null
 
   const isEdit = !!initial
+  const isGood = form.type === 'good'
+  const boostLabel = isGood ? 'Streak bonus' : 'Streak penalty'
   const valid =
     form.name.trim().length > 0 &&
     Number(form.amount) > 0 &&
@@ -115,14 +117,16 @@ export default function AddHabitDialog({ open, initial, onClose, onSave, onDelet
       <div className="m3-card outlined" style={{ padding: '12px 16px', marginTop: 12 }}>
         <div className="row between">
           <div>
-            <p className="m3-body" style={{ margin: 0 }}>🔥 Streak bonus</p>
+            <p className="m3-body" style={{ margin: 0 }}>🔥 {boostLabel}</p>
             <p className="m3-body-sm" style={{ margin: 0 }}>
               {boostEnabled
-                ? `${form.type === 'good' ? 'Reward' : 'Cost'} increases once you keep a streak going — miss a single day and it drops right back to the base price`
+                ? isGood
+                  ? 'Reward increases once you keep a streak going — miss a single day and it drops right back to the base amount'
+                  : 'Cost increases the longer you keep repeating this streak — miss a single day and it drops right back to the base amount'
                 : 'Keep the price the same no matter the streak'}
             </p>
           </div>
-          <button className={`m3-switch${boostEnabled ? ' on' : ''}`} onClick={toggleBoost} aria-label="Toggle streak bonus">
+          <button className={`m3-switch${boostEnabled ? ' on' : ''}`} onClick={toggleBoost} aria-label={`Toggle ${boostLabel.toLowerCase()}`}>
             <span className="knob" />
           </button>
         </div>
@@ -134,7 +138,7 @@ export default function AddHabitDialog({ open, initial, onClose, onSave, onDelet
               <input id="boost-days" type="number" min="1" step="1" value={form.streakBoostDays} onChange={(e) => set({ streakBoostDays: e.target.value })} />
             </div>
             <div className="m3-field" style={{ marginBottom: 0 }}>
-              <label htmlFor="boost-amount">New {form.type === 'good' ? 'reward' : 'cost'}</label>
+              <label htmlFor="boost-amount">New {isGood ? 'reward' : 'cost'}</label>
               <input id="boost-amount" type="number" min="0" step="0.5" value={form.streakBoostAmount ?? ''} onChange={(e) => set({ streakBoostAmount: e.target.value })} />
             </div>
           </div>
