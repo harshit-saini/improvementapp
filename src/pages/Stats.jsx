@@ -1,8 +1,9 @@
 import { useMemo } from 'react'
 import { useAppState } from '../context/AppContext'
 import { formatMoney } from '../utils/currency'
-import { weeklyStats, habitFrequency, computeStreak, computeAchievements, getBalance } from '../utils/selectors'
+import { weeklyStats, habitFrequency, computeStreak, computeAchievements, getBalance, getDailyActivity } from '../utils/selectors'
 import WeeklyChart from '../components/WeeklyChart'
+import CalendarHeatmap from '../components/CalendarHeatmap'
 
 export default function Stats() {
   const state = useAppState()
@@ -10,6 +11,7 @@ export default function Stats() {
   const currency = settings.currencyCode
 
   const weeks = useMemo(() => weeklyStats(logs, 6), [logs])
+  const dailyActivity = useMemo(() => getDailyActivity(logs, 140), [logs])
   const thisWeek = weeks[weeks.length - 1]
   const lastWeek = weeks[weeks.length - 2]
   const netDelta = thisWeek && lastWeek ? thisWeek.net - lastWeek.net : 0
@@ -37,6 +39,11 @@ export default function Stats() {
       <div className="m3-card elevated">
         <h2 className="m3-title" style={{ margin: '0 0 12px' }}>Weekly earned vs spent</h2>
         <WeeklyChart weeks={weeks} />
+      </div>
+
+      <div className="m3-card elevated">
+        <h2 className="m3-title" style={{ margin: '0 0 12px' }}>Consistency</h2>
+        <CalendarHeatmap days={dailyActivity} currencyCode={currency} />
       </div>
 
       <div className="m3-card outlined">
