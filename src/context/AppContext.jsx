@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useMemo, useReducer } from 'react'
-import { loadState, saveState, defaultState } from '../utils/storage'
+import { loadState, saveState, defaultState, normalizeState } from '../utils/storage'
 import { makeId } from '../utils/id'
 import { todayKey } from '../utils/date'
 import { applySchemeToDocument } from '../utils/theme'
@@ -64,7 +64,7 @@ function reducer(state, action) {
       return { ...state, settings: { ...state.settings, ...action.patch } }
     }
     case 'IMPORT_STATE': {
-      return { bills: [], ...action.state }
+      return normalizeState(action.state)
     }
     case 'RESET_STATE': {
       return defaultState()
@@ -75,11 +75,7 @@ function reducer(state, action) {
 }
 
 export function AppProvider({ children }) {
-  const [state, dispatch] = useReducer(reducer, null, () => {
-    const loaded = loadState()
-    if (!loaded) return defaultState()
-    return { bills: [], ...loaded }
-  })
+  const [state, dispatch] = useReducer(reducer, null, () => normalizeState(loadState()))
 
   useEffect(() => {
     saveState(state)

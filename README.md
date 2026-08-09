@@ -17,7 +17,8 @@ Everything is stored on-device — no backend, no account, works offline.
   habits, and unlockable achievements.
 - **Settings** — pick your currency (16 options), light/dark/system theme,
   a Material You accent color (generates a full tonal palette from a seed
-  color), a savings goal with progress bar, and JSON export/import/reset.
+  color), independent daily/weekly/monthly net-earnings goals with progress
+  bars on Home, and JSON export/import/reset.
 - Installable as a **PWA** (add to home screen, works offline via service
   worker), mobile-first responsive layout, undo on every action via snackbar,
   and a confirmation prompt before spending you into debt.
