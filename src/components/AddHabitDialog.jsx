@@ -131,7 +131,9 @@ export default function AddHabitDialog({ open, initial, onClose, onSave, onDelet
           <div>
             <p className="m3-body" style={{ margin: 0 }}>🔥 Streak bonus</p>
             <p className="m3-body-sm" style={{ margin: 0 }}>
-              {boostEnabled ? `${form.type === 'good' ? 'Reward' : 'Cost'} increases once you keep a streak going` : "Keep the price the same no matter the streak"}
+              {boostEnabled
+                ? `${form.type === 'good' ? 'Reward' : 'Cost'} increases once you keep a streak going — miss a single day and it drops right back to the base price`
+                : 'Keep the price the same no matter the streak'}
             </p>
           </div>
           <button className={`m3-switch${boostEnabled ? ' on' : ''}`} onClick={toggleBoost} aria-label="Toggle streak bonus">
