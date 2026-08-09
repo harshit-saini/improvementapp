@@ -4,28 +4,50 @@ import Dialog from './Dialog'
 const GOOD_EMOJIS = ['✅', '🏋️', '📖', '💧', '🥗', '🧘', '🛏️', '🦷', '🚶', '💰', '🌱', '😴']
 const BAD_EMOJIS = ['🍦', '📱', '🍕', '🚬', '🛋️', '🎮', '🍺', '🛍️', '😴', '🍬', '⏰', '🙅']
 
-const emptyForm = { name: '', type: 'good', amount: 5, emoji: '✅', category: '', repeatable: false }
+const emptyForm = { name: '', type: 'good', amount: 5, emoji: '✅', category: '', repeatable: false, streakBoostDays: 0, streakBoostAmount: null }
 
 export default function AddHabitDialog({ open, initial, onClose, onSave, onDelete }) {
   const [form, setForm] = useState(emptyForm)
+  const [boostEnabled, setBoostEnabled] = useState(false)
 
   useEffect(() => {
-    if (open) setForm(initial ? { ...initial } : emptyForm)
+    if (!open) return
+    const next = initial ? { ...emptyForm, ...initial } : emptyForm
+    setForm(next)
+    setBoostEnabled(!!next.streakBoostDays)
   }, [open, initial])
 
   if (!open) return null
 
   const isEdit = !!initial
   const emojiSet = form.type === 'good' ? GOOD_EMOJIS : BAD_EMOJIS
-  const valid = form.name.trim().length > 0 && Number(form.amount) > 0
+  const valid =
+    form.name.trim().length > 0 &&
+    Number(form.amount) > 0 &&
+    (!boostEnabled || (Number(form.streakBoostDays) > 0 && Number(form.streakBoostAmount) > 0))
 
   function set(patch) {
     setForm((f) => ({ ...f, ...patch }))
   }
 
+  function toggleBoost() {
+    const next = !boostEnabled
+    setBoostEnabled(next)
+    if (next && !form.streakBoostAmount) {
+      set({ streakBoostDays: form.streakBoostDays || 7, streakBoostAmount: Math.round(Number(form.amount) * 2) })
+    }
+  }
+
   function submit() {
     if (!valid) return
-    onSave({ ...form, name: form.name.trim(), amount: Number(form.amount), category: form.category.trim() || 'General' })
+    onSave({
+      ...form,
+      name: form.name.trim(),
+      amount: Number(form.amount),
+      category: form.category.trim() || 'General',
+      streakBoostDays: boostEnabled ? Number(form.streakBoostDays) : 0,
+      streakBoostAmount: boostEnabled ? Number(form.streakBoostAmount) : null,
+    })
   }
 
   return (
@@ -102,6 +124,33 @@ export default function AddHabitDialog({ open, initial, onClose, onSave, onDelet
         <button className={`m3-switch${form.repeatable ? ' on' : ''}`} onClick={() => set({ repeatable: !form.repeatable })} aria-label="Toggle repeatable">
           <span className="knob" />
         </button>
+      </div>
+
+      <div className="m3-card outlined" style={{ padding: '12px 16px', marginTop: 12 }}>
+        <div className="row between">
+          <div>
+            <p className="m3-body" style={{ margin: 0 }}>🔥 Streak bonus</p>
+            <p className="m3-body-sm" style={{ margin: 0 }}>
+              {boostEnabled ? `${form.type === 'good' ? 'Reward' : 'Cost'} increases once you keep a streak going` : "Keep the price the same no matter the streak"}
+            </p>
+          </div>
+          <button className={`m3-switch${boostEnabled ? ' on' : ''}`} onClick={toggleBoost} aria-label="Toggle streak bonus">
+            <span className="knob" />
+          </button>
+        </div>
+
+        {boostEnabled && (
+          <div className="m3-field-row" style={{ marginTop: 12, marginBottom: 0 }}>
+            <div className="m3-field" style={{ marginBottom: 0 }}>
+              <label htmlFor="boost-days">After streak of (days)</label>
+              <input id="boost-days" type="number" min="1" step="1" value={form.streakBoostDays} onChange={(e) => set({ streakBoostDays: e.target.value })} />
+            </div>
+            <div className="m3-field" style={{ marginBottom: 0 }}>
+              <label htmlFor="boost-amount">New {form.type === 'good' ? 'reward' : 'cost'}</label>
+              <input id="boost-amount" type="number" min="0" step="0.5" value={form.streakBoostAmount ?? ''} onChange={(e) => set({ streakBoostAmount: e.target.value })} />
+            </div>
+          </div>
+        )}
       </div>
     </Dialog>
   )

@@ -1,8 +1,9 @@
 import { formatMoney } from '../utils/currency'
 
-export default function HabitRow({ habit, currencyCode, done, count, streak, onAct, onUndo }) {
+export default function HabitRow({ habit, currencyCode, done, count, streak, amount, boosted, onAct, onUndo }) {
   const isGood = habit.type === 'good'
   const showUndo = habit.repeatable ? count > 0 : done
+  const displayAmount = amount ?? habit.amount
 
   return (
     <div className={`m3-card outlined row between`} style={{ gap: 12 }}>
@@ -31,9 +32,11 @@ export default function HabitRow({ habit, currencyCode, done, count, streak, onA
             {habit.name}
           </span>
           <span className="m3-body-sm row gap-8">
-            <span>{isGood ? '+' : '-'}{formatMoney(habit.amount, currencyCode)}</span>
+            <span style={boosted ? { color: 'var(--md-tertiary)', fontWeight: 600 } : undefined}>
+              {boosted && '🔥 '}{isGood ? '+' : '-'}{formatMoney(displayAmount, currencyCode)}
+            </span>
             {habit.repeatable && count > 0 && <span>· ×{count} today</span>}
-            {isGood && streak > 0 && <span>· 🔥 {streak}d</span>}
+            {streak > 0 && <span>· 🔥 {streak}d</span>}
           </span>
         </span>
       </button>

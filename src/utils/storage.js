@@ -34,7 +34,7 @@ export function defaultState() {
       onboarded: false,
     },
     habits: [
-      { id: 'h1', name: 'Morning workout', type: 'good', amount: 5, emoji: '🏋️', category: 'Health', repeatable: false, archived: false, createdAt: now },
+      { id: 'h1', name: 'Morning workout', type: 'good', amount: 5, emoji: '🏋️', category: 'Health', repeatable: false, archived: false, createdAt: now, streakBoostDays: 7, streakBoostAmount: 10 },
       { id: 'h2', name: 'Read 20 minutes', type: 'good', amount: 3, emoji: '📖', category: 'Growth', repeatable: false, archived: false, createdAt: now },
       { id: 'h3', name: 'Drink a glass of water', type: 'good', amount: 1, emoji: '💧', category: 'Health', repeatable: true, archived: false, createdAt: now },
       { id: 'h4', name: 'Make my bed', type: 'good', amount: 2, emoji: '🛏️', category: 'Chores', repeatable: false, archived: false, createdAt: now },
