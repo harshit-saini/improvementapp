@@ -1,4 +1,4 @@
-import { todayKey, daysAgoKey, lastNWeeks, weekKey } from './date'
+import { todayKey, daysAgoKey, lastNWeeks, weekKey, monthKey } from './date'
 
 export function getBalance(logs) {
   return logs.reduce((sum, l) => sum + l.amount, 0)
@@ -6,6 +6,19 @@ export function getBalance(logs) {
 
 export function getLogsForDay(logs, dateKey) {
   return logs.filter((l) => l.dateKey === dateKey)
+}
+
+const PERIOD_KEY_FNS = {
+  daily: (dk) => dk,
+  weekly: weekKey,
+  monthly: monthKey,
+}
+
+// Net earned-minus-spent within the current daily/weekly/monthly period, for goal tracking.
+export function getPeriodNet(logs, period, from = new Date()) {
+  const keyFn = PERIOD_KEY_FNS[period] || PERIOD_KEY_FNS.daily
+  const currentPeriod = keyFn(todayKey(from))
+  return logs.filter((l) => keyFn(l.dateKey) === currentPeriod).reduce((s, l) => s + l.amount, 0)
 }
 
 export function getHabitEntriesToday(logs, habitId, dateKey) {

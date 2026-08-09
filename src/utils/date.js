@@ -32,6 +32,10 @@ export function weekKey(dateKey) {
   return `${d.getFullYear()}-W${String(week).padStart(2, '0')}`
 }
 
+export function monthKey(dateKey) {
+  return dateKey.slice(0, 7) // "YYYY-MM"
+}
+
 export function startOfWeek(dateKey) {
   const d = keyToDate(dateKey)
   const day = (d.getDay() + 6) % 7

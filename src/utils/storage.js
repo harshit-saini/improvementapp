@@ -26,7 +26,11 @@ export function defaultState() {
       currencyCode: 'USD',
       themeMode: 'system',
       seedColor: '#6750A4',
-      savingsGoal: { name: 'Treat yourself', amount: 100 },
+      savingsGoals: {
+        daily: { name: 'Coffee treat', amount: 10 },
+        weekly: { name: 'Weekend treat', amount: 50 },
+        monthly: { name: 'Something nice', amount: 150 },
+      },
       onboarded: false,
     },
     habits: [
@@ -43,5 +47,26 @@ export function defaultState() {
       { id: 'b2', name: 'Streaming subscription', amount: 8, emoji: '📺', category: 'Subscriptions', frequency: 'weekly', archived: false, createdAt: now },
     ],
     logs: [],
+  }
+}
+
+// Fills in fields introduced after a save/export was made (e.g. old saves have no
+// `bills` array, or a singular `savingsGoal` instead of per-period `savingsGoals`)
+// without touching the user's actual habits/logs/settings.
+export function normalizeState(loaded) {
+  if (!loaded) return defaultState()
+  const defaults = defaultState()
+  return {
+    ...loaded,
+    bills: loaded.bills || [],
+    settings: {
+      ...defaults.settings,
+      ...loaded.settings,
+      savingsGoals: {
+        daily: { ...defaults.settings.savingsGoals.daily, ...loaded.settings?.savingsGoals?.daily },
+        weekly: { ...defaults.settings.savingsGoals.weekly, ...loaded.settings?.savingsGoals?.weekly },
+        monthly: { ...defaults.settings.savingsGoals.monthly, ...loaded.settings?.savingsGoals?.monthly },
+      },
+    },
   }
 }

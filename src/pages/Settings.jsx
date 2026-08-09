@@ -11,13 +11,25 @@ const THEME_MODES = [
   { key: 'system', label: '🖥️ Auto' },
 ]
 
+const GOAL_PERIODS = [
+  { key: 'daily', label: 'Daily' },
+  { key: 'weekly', label: 'Weekly' },
+  { key: 'monthly', label: 'Monthly' },
+]
+
 export default function Settings() {
   const state = useAppState()
   const { updateSettings, importState, resetState } = useAppActions()
   const notify = useSnackbar()
   const fileInput = useRef(null)
   const [resetOpen, setResetOpen] = useState(false)
+  const [goalPeriod, setGoalPeriod] = useState('daily')
   const { settings } = state
+  const activeGoal = settings.savingsGoals?.[goalPeriod] || { name: '', amount: 0 }
+
+  function updateGoal(patch) {
+    updateSettings({ savingsGoals: { ...settings.savingsGoals, [goalPeriod]: { ...activeGoal, ...patch } } })
+  }
 
   function exportData() {
     const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' })
@@ -100,16 +112,25 @@ export default function Settings() {
         </div>
       </SectionCard>
 
-      <SectionCard title="Savings goal">
-        <p className="m3-body-sm" style={{ marginTop: 0 }}>Set something to save your coins toward — shown as a progress bar on Home.</p>
+      <SectionCard title="Goals">
+        <p className="m3-body-sm" style={{ marginTop: 0 }}>
+          Set a target for how much you want to net (earned minus spent) each day, week, and month — each tracked independently and shown as progress bars on Home. Set an amount to 0 to hide it.
+        </p>
+        <div className="m3-segmented">
+          {GOAL_PERIODS.map((p) => (
+            <button key={p.key} className={goalPeriod === p.key ? 'selected' : ''} onClick={() => setGoalPeriod(p.key)}>
+              {p.label}
+            </button>
+          ))}
+        </div>
         <div className="m3-field-row">
           <div className="m3-field">
             <label htmlFor="goal-name">Goal name</label>
-            <input id="goal-name" value={settings.savingsGoal?.name || ''} onChange={(e) => updateSettings({ savingsGoal: { ...settings.savingsGoal, name: e.target.value } })} />
+            <input id="goal-name" value={activeGoal.name} onChange={(e) => updateGoal({ name: e.target.value })} />
           </div>
           <div className="m3-field">
             <label htmlFor="goal-amount">Target amount</label>
-            <input id="goal-amount" type="number" min="0" value={settings.savingsGoal?.amount ?? 0} onChange={(e) => updateSettings({ savingsGoal: { ...settings.savingsGoal, amount: Number(e.target.value) } })} />
+            <input id="goal-amount" type="number" min="0" value={activeGoal.amount} onChange={(e) => updateGoal({ amount: Number(e.target.value) })} />
           </div>
         </div>
       </SectionCard>

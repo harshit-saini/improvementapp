@@ -3,9 +3,15 @@ import { useAppState, useAppActions } from '../context/AppContext'
 import { useSnackbar } from '../context/SnackbarContext'
 import { formatMoney, formatSigned } from '../utils/currency'
 import { todayKey, formatFriendlyDate } from '../utils/date'
-import { getBalance, getLogsForDay, isDoneToday, countToday, computeStreak } from '../utils/selectors'
+import { getBalance, getLogsForDay, isDoneToday, countToday, computeStreak, getPeriodNet } from '../utils/selectors'
 import HabitRow from '../components/HabitRow'
 import ConfirmDialog from '../components/ConfirmDialog'
+
+const GOAL_PERIODS = [
+  { key: 'daily', label: 'Today' },
+  { key: 'weekly', label: 'This week' },
+  { key: 'monthly', label: 'This month' },
+]
 
 export default function Home() {
   const state = useAppState()
@@ -28,8 +34,13 @@ export default function Home() {
   const goodHabits = filtered.filter((h) => h.type === 'good')
   const badHabits = filtered.filter((h) => h.type === 'bad')
 
-  const goal = settings.savingsGoal
-  const goalProgress = goal?.amount > 0 ? Math.min(100, Math.max(0, (overallBalance / goal.amount) * 100)) : 0
+  const goals = GOAL_PERIODS.map(({ key, label }) => {
+    const goal = settings.savingsGoals?.[key]
+    if (!goal || goal.amount <= 0) return null
+    const net = getPeriodNet(logs, key)
+    const progress = Math.min(100, Math.max(0, (net / goal.amount) * 100))
+    return { key, label, goal, net, progress }
+  }).filter(Boolean)
 
   function doGood(habit) {
     if (habit.repeatable) {
@@ -88,14 +99,21 @@ export default function Home() {
         )}
       </div>
 
-      {goal?.amount > 0 && (
+      {goals.length > 0 && (
         <div className="m3-card outlined">
-          <div className="row between">
-            <span className="m3-body-sm">🎯 Goal: {goal.name}</span>
-            <span className="m3-body-sm">{formatMoney(Math.max(0, overallBalance), currency)} / {formatMoney(goal.amount, currency)}</span>
-          </div>
-          <div className="progress-track" style={{ marginTop: 8 }}>
-            <div className="progress-fill" style={{ width: `${goalProgress}%` }} />
+          <p className="m3-title-sm" style={{ margin: '0 0 12px' }}>🎯 Goals</p>
+          <div className="stack-16">
+            {goals.map(({ key, label, goal, net, progress }) => (
+              <div key={key}>
+                <div className="row between">
+                  <span className="m3-body-sm">{label} · {goal.name}</span>
+                  <span className="m3-body-sm">{formatMoney(net, currency)} / {formatMoney(goal.amount, currency)}</span>
+                </div>
+                <div className="progress-track" style={{ marginTop: 6 }}>
+                  <div className="progress-fill" style={{ width: `${progress}%` }} />
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       )}
