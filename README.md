@@ -10,8 +10,9 @@ Everything is stored on-device — no backend, no account, works offline.
   a search bar, and your good habits / guilty pleasures as tap-to-log cards.
 - **Habits** — add, edit, or delete habits: name, reward/cost, a searchable
   library of 120+ icons, category, whether it can be logged once or multiple
-  times a day, and an optional **streak bonus** — keep a habit going for N
-  days and its reward/cost jumps to a higher amount you set, resetting to the
+  times a day, and an optional streak escalation — keep a habit going for N
+  days and the price jumps to a higher amount you set (a **streak bonus** for
+  good habits, a **streak penalty** for guilty pleasures), resetting to the
   base rate if the streak breaks.
 - **Fixed spends** — the "shop": recurring costs (daily or weekly) that charge
   automatically on schedule whether or not you've earned anything, so there's
