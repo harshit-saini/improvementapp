@@ -1,8 +1,6 @@
 import { useEffect, useState } from 'react'
 import Dialog from './Dialog'
-
-const GOOD_EMOJIS = ['✅', '🏋️', '📖', '💧', '🥗', '🧘', '🛏️', '🦷', '🚶', '💰', '🌱', '😴']
-const BAD_EMOJIS = ['🍦', '📱', '🍕', '🚬', '🛋️', '🎮', '🍺', '🛍️', '😴', '🍬', '⏰', '🙅']
+import IconPicker from './IconPicker'
 
 const emptyForm = { name: '', type: 'good', amount: 5, emoji: '✅', category: '', repeatable: false, streakBoostDays: 0, streakBoostAmount: null }
 
@@ -20,7 +18,6 @@ export default function AddHabitDialog({ open, initial, onClose, onSave, onDelet
   if (!open) return null
 
   const isEdit = !!initial
-  const emojiSet = form.type === 'good' ? GOOD_EMOJIS : BAD_EMOJIS
   const valid =
     form.name.trim().length > 0 &&
     Number(form.amount) > 0 &&
@@ -68,10 +65,10 @@ export default function AddHabitDialog({ open, initial, onClose, onSave, onDelet
       }
     >
       <div className="m3-segmented">
-        <button className={form.type === 'good' ? 'selected' : ''} onClick={() => set({ type: 'good', emoji: GOOD_EMOJIS.includes(form.emoji) ? form.emoji : '✅' })}>
+        <button className={form.type === 'good' ? 'selected' : ''} onClick={() => set({ type: 'good' })}>
           😇 Good habit
         </button>
-        <button className={form.type === 'bad' ? 'selected' : ''} onClick={() => set({ type: 'bad', emoji: BAD_EMOJIS.includes(form.emoji) ? form.emoji : '🍦' })}>
+        <button className={form.type === 'bad' ? 'selected' : ''} onClick={() => set({ type: 'bad' })}>
           😈 Guilty pleasure
         </button>
       </div>
@@ -99,19 +96,8 @@ export default function AddHabitDialog({ open, initial, onClose, onSave, onDelet
       </div>
 
       <div className="m3-field">
-        <label>Icon</label>
-        <div className="chip-row" style={{ marginBottom: 0 }}>
-          {emojiSet.map((e) => (
-            <button
-              key={e}
-              className={`m3-chip${form.emoji === e ? ' selected' : ''}`}
-              onClick={() => set({ emoji: e })}
-              style={{ fontSize: '1.1rem', width: 44, justifyContent: 'center' }}
-            >
-              {e}
-            </button>
-          ))}
-        </div>
+        <label>Icon {form.emoji && <span style={{ fontSize: '1.1rem' }}>{form.emoji}</span>}</label>
+        <IconPicker value={form.emoji} onChange={(emoji) => set({ emoji })} />
       </div>
 
       <div className="m3-card outlined row between" style={{ padding: '12px 16px' }}>
